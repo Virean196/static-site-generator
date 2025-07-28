@@ -7,4 +7,4 @@ html_node = HTMLNode(None, None, None, {
     "target": "_blank",
 })
 
-print(html_node)
+print(html_node.props_to_html())

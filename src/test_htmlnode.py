@@ -27,3 +27,7 @@ class TestHTMLNode(unittest.TestCase):
         node = HTMLNode("a", None, None, {"href": "https://www.google.com"})
         node2 = HTMLNode("a", None, None, {"href": "https://www.bootdev.com"})
         self.assertNotEqual(node, node2)
+
+    def test_props_to_html(self):
+        node = HTMLNode(None, None, None, {"href": "https://www.google.com","target": "_blank"})
+        self.assertEqual(node.props_to_html(), 'href="https://www.google.com" target="_blank" ')
