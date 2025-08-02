@@ -1,34 +1,32 @@
-from textnode import TextNode, TextType
-from htmlnode import HTMLNode, ParentNode, LeafNode
-from inline_markdown import (split_nodes_delimiter, extract_markdown_images, extract_markdown_links)
+import os
+import shutil
+import sys
 
-text_node = TextNode("This is some anchor text", TextType.LINK, "https://www.boot.dev")
-html_node = HTMLNode(None, None, None, {
-    "href": "https://www.google.com",
-    "target": "_blank",
-})
+from copystatic import copy_files_recursive
+from gencontent import generate_pages_recursive
 
-#print(html_node.props_to_html())
 
-node = ParentNode(
-    "p",
-    [
-        LeafNode("b", "Bold text"),
-        LeafNode(None, "Normal text"),
-        LeafNode("i", "italic text"),
-        LeafNode(None, "Normal text"),
-    ],
-)
+dir_path_static = "./static"
+dir_path_public = "./docs"
+dir_path_content = "./content"
+template_path = "./template.html"
+default_basepath = "/"
 
-code_node = [TextNode("`This` is a code node", TextType.CODE)]
 
-#print(node.to_html())
+def main():
+    basepath = default_basepath
+    if len(sys.argv) > 1:
+        basepath = sys.argv[1]
 
-text = "This is text with a ![rick roll](https://i.imgur.com/aKaOqIh.gif) and ![obi wan](https://i.imgur.com/fJRm4Vk.jpeg)"
-print(extract_markdown_images(text))
-# [("rick roll", "https://i.imgur.com/aKaOqIh.gif"), ("obi wan", "https://i.imgur.com/fJRm4Vk.jpeg")]
+    print("Deleting public directory...")
+    if os.path.exists(dir_path_public):
+        shutil.rmtree(dir_path_public)
 
-text = "This is text with a link [to boot dev](https://www.boot.dev) and [to youtube](https://www.youtube.com/@bootdotdev)"
-print(extract_markdown_links(text))
-# [("to boot dev", "https://www.boot.dev"), ("to youtube", "https://www.youtube.com/@bootdotdev")]
+    print("Copying static files to public directory...")
+    copy_files_recursive(dir_path_static, dir_path_public)
 
+    print("Generating content...")
+    generate_pages_recursive(dir_path_content, template_path, dir_path_public, basepath)
+
+
+main()
